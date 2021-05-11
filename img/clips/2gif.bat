@@ -1,0 +1,1 @@
+convert Banca\ Múltiple\ -\ Google\ Chrome\ 2021-05-10\ 12-25-56.mp4 -loop 3 animation.gif
