@@ -1,0 +1,1 @@
+convert -delay 0.01 videoFrameTarget.avi -loop 3 animation.gif
