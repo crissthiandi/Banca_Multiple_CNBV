@@ -1,12 +1,12 @@
 import cv2 as cv
-
+import os 
 
 def main():
     # Importar archivos de video, parámetros: 
     #0 viene con una cámara, 1 cámara USB, 
     #lee el archivo de video cuando el nombre del archivo es
-        #video_caputre = cv.VideoCapture ("img/clips/Banca Múltiple - Google Chrome 2021-05-10 12-25-56.mp4")
-        video_caputre = cv.VideoCapture ("Banca Múltiple - Google Chrome 2021-05-10 12-25-56.mp4")
+        video_caputre = cv.VideoCapture ("img/clips/Banca Múltiple - Google Chrome 2021-05-10 12-25-56.mp4")
+        # video_caputre = cv.VideoCapture ("Banca Múltiple - Google Chrome 2021-05-10 12-25-56.mp4")
 
          # Obtener los parámetros del video importado
         fps = video_caputre.get(cv.CAP_PROP_FPS)
@@ -22,14 +22,15 @@ def main():
         # las mismas aquí, de lo contrario, el video no se puede reproducir
         # Tenga en cuenta que aquí está la altura (altura, ancho)
         # size = (int(height-100), int(width))
-        size = (int(width),int(height-100))
+        size = (int(width),int(height-100)) #lo de arriba es incorrecto
         
         # Crear objeto de escritura de video
         fourcc = cv.VideoWriter_fourcc('M', 'J', 'P', 'G')
         # fourcc = cv.VideoWriter_fourcc(*'DIVX') # https://docs.opencv.org/master/dd/d43/tutorial_py_video_display.html
         # fourcc = cv.VideoWriter_fourcc(*'mp4v')
         # fourcc = cv.VideoWriter_fourcc(*'VIDX') 
-        videp_write = cv.VideoWriter("videoFrameTarget.mp4",fourcc, int(fps*0.5), size)
+        videp_write = cv.VideoWriter("img/clips/videoFrameTarget.avi",fourcc, int(fps*0.5), size)
+        # videp_write = cv.VideoWriter("videoFrameTarget.mp4",fourcc, int(fps*0.5), size)
         
         # Lea el fotograma del video, luego escriba el archivo y muéstrelo en la ventana
         success, frame_src = video_caputre.read()
@@ -71,7 +72,7 @@ cv.destroyAllWindows()
 
 
 
-
+####Flip video
 #import numpy as np
 #import cv2 as cv
 #cap = cv.VideoCapture('img/clips/Banca Múltiple - Google Chrome 2021-05-10 12-25-56 origal.mp4')
@@ -93,3 +94,52 @@ cv.destroyAllWindows()
 #cap.release()
 #out.release()
 #cv.destroyAllWindows()
+
+
+### Resize video
+
+import time
+
+def rescale_frame(frame_input, percent=75):
+    width = int(frame_input.shape[1] * percent / 100)
+    height = int(frame_input.shape[0] * percent / 100)
+    dim = (width, height)
+    return cv.resize(frame_input, dim, interpolation=cv.INTER_AREA)
+
+cap = cv.VideoCapture("img/clips/videoFrameTarget.avi")
+
+if cap.isOpened():
+    ret, frame = cap.read()
+    rescaled_frame = rescale_frame(frame,50)
+    (h, w) = rescaled_frame.shape[:2]
+    fourcc = cv.VideoWriter_fourcc(*'mp4v')
+    # fourcc = cv.VideoWriter_fourcc(*'mjpg')#para .avi
+    writer = cv.VideoWriter('img/clips/reducido.mp4',#para mp4 usar mp4v
+                             fourcc, int(15.0),
+                             (w, h))
+else:
+    print("Camera is not opened")
+
+
+while cap.isOpened():
+    ret, frame = cap.read()
+
+    rescaled_frame = rescale_frame(frame,50)
+
+    # write the output frame to file
+    writer.write(rescaled_frame)
+
+    cv.imshow("Output", rescaled_frame)
+    key = cv.waitKey(1) & 0xFF
+    if key == ord("q"):
+        break
+
+
+
+writer.release()
+# cap.release()
+cv.destroyAllWindows()
+
+
+
+
